@@ -15,6 +15,7 @@ def count_increasing(numbers):
 
     return total
 
+
 def sliding_window_iter(arr, window_size):
     return (arr[i : i + window_size] for i in range(len(arr) - window_size + 1))
 
