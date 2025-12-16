@@ -6,22 +6,15 @@ def parse_input(data):
 
 
 def count_increasing(numbers):
-    prev = numbers[0]
-    total = 0
-
-    for cur in numbers[1:]:
-        total += prev < cur
-        prev = cur
-
-    return total
+    return sum(prev < cur for prev, cur in windowed(numbers, 2))
 
 
-def sliding_window_iter(arr, window_size):
+def windowed(arr, window_size):
     return (arr[i : i + window_size] for i in range(len(arr) - window_size + 1))
 
 
 def sliding_window_sum(numbers, window_size):
-    return [sum(w) for w in sliding_window_iter(numbers, window_size)]
+    return [sum(w) for w in windowed(numbers, window_size)]
 
 
 def part1(numbers):
