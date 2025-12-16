@@ -2,7 +2,7 @@ import sys
 
 
 def parse_input(data: str) -> list[int]:
-    return list(map(int, data.splitlines()))
+    return [int(s) for s in data.splitlines()]
 
 
 def count_increasing(numbers: list[int]) -> int:
@@ -14,7 +14,7 @@ def windowed(arr: list, window_size: int):
 
 
 def sliding_window_sum(numbers: list[int], window_size: int) -> list[int]:
-    return list(map(sum, windowed(numbers, window_size)))
+    return [sum(w) for w in windowed(numbers, window_size)]
 
 
 def part1(numbers: list[int]) -> int:
