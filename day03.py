@@ -2,17 +2,19 @@ import sys
 
 from utils import get_input_filename
 
+type Report = list[list[bool]]
 
-def parse_input(data):
+
+def parse_input(data: str) -> Report:
     return [[c == "1" for c in line] for line in data.splitlines()]
 
 
-def bools_to_int(bools):
+def bools_to_int(bools: list[bool]) -> int:
     binary_str = ["1" if b else "0" for b in bools]
     return int("".join(binary_str), 2)
 
 
-def part1(report):
+def part1(report: Report) -> int:
     ones_count = report[0][:]
 
     for line in report[1:]:
@@ -20,7 +22,7 @@ def part1(report):
             ones_count[i] += bit
 
     half = len(report) / 2
-    most_common = [ones > half for ones in ones_count]
+    most_common = [zeros > half for zeros in ones_count]
     gamma_rate = bools_to_int(most_common)
 
     least_common = [not bit for bit in most_common]
@@ -29,7 +31,7 @@ def part1(report):
     return gamma_rate * epsilon_rate
 
 
-def calculate_rating(report, selector):
+def calculate_rating(report: Report, selector) -> int:
     current = report[:]
 
     for i in range(len(current[0])):
@@ -39,7 +41,7 @@ def calculate_rating(report, selector):
             bit = line[i]
             partitions[bit].append(line)
 
-        chosen_bit = selector(*partitions)
+        chosen_bit = selector(partitions[0], partitions[1])
         current = partitions[chosen_bit]
 
         if len(current) == 1:
@@ -48,15 +50,21 @@ def calculate_rating(report, selector):
     return bools_to_int(current[0])
 
 
-def calculate_oxygen_rating(report):
-    return calculate_rating(report, lambda ones, zeros: len(ones) <= len(zeros))
+def calculate_oxygen_rating(report: Report) -> int:
+    def pick_most_common(zeros, ones):
+        return 1 if len(ones) >= len(zeros) else 0
+
+    return calculate_rating(report, pick_most_common)
 
 
-def calculate_co2_rating(report):
-    return calculate_rating(report, lambda ones, zeros: len(ones) > len(zeros))
+def calculate_co2_rating(report: Report) -> int:
+    def pick_least_common(zeros, ones):
+        return 0 if len(zeros) <= len(ones) else 1
+
+    return calculate_rating(report, pick_least_common)
 
 
-def part2(report):
+def part2(report: Report) -> int:
     o_rating = calculate_oxygen_rating(report)
     co2_rating = calculate_co2_rating(report)
 
