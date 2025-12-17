@@ -1,5 +1,7 @@
 import sys
 
+from utils import get_input_filename
+
 
 def parse_input(data):
     return []
@@ -16,7 +18,7 @@ def part2(*args):
 
 
 if __name__ == "__main__":
-    filename = "./sample.txt" if len(sys.argv) < 2 else sys.argv[1]
+    filename = get_input_filename(sys.argv)
 
     with open(filename, "r", encoding="utf-8") as f:
         parsed_data = parse_input(f.read())
