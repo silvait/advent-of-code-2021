@@ -31,5 +31,6 @@ if __name__ == "__main__":
 
     with open(filename, "r", encoding="utf-8") as f:
         parsed_data = parse_input(f.read())
-        print(part1(parsed_data))
-        print(part2(parsed_data))
+
+        for solve in [part1, part2]:
+            print(solve(parsed_data))
