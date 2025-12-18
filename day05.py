@@ -1,73 +1,51 @@
 import sys
 from collections import defaultdict
 
-from utils import get_input_filename
+from utils import get_input_filename, get_line_points
 
 
 def parse_input(data):
     ranges = []
 
     for line in data.splitlines():
-        first, second = line.split(" -> ")
-        ranges.append([parse_coordinate(first), parse_coordinate(second)])
+        p1_str, p2_str = line.split(" -> ")
+        ranges.append([parse_coordinate(p1_str), parse_coordinate(p2_str)])
 
     return ranges
 
 
-def is_straight(c1, c2):
-    return c1[0] == c2[0] or c1[1] == c2[1]
+def is_horizontal_or_vertical(coordinates):
+    p1, p2 = coordinates
+    (x1, y1), (x2, y2) = p1, p2
+    return x1 == x2 or y1 == y2
 
 
 def parse_coordinate(text: str) -> tuple[int, ...]:
     return tuple(int(c) for c in text.split(","))
 
 
-def draw_and_count(ranges):
+def plot_lines(ranges):
     counts = defaultdict(int)
 
-    for c1, c2 in ranges:
-        for x, y in integer_line_points(c1, c2):
+    for p1, p2 in ranges:
+        for x, y in get_line_points(p1, p2):
             counts[(x, y)] += 1
 
+    return counts
+
+
+def count_overlaps(ranges):
+    counts = plot_lines(ranges)
     return sum(v > 1 for v in counts.values())
 
 
 def part1(ranges):
-    return draw_and_count([(c1, c2) for c1, c2 in ranges if is_straight(c1, c2)])
-
-
-def integer_line_points(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
-
-    points = []
-
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-
-    sx = 1 if x1 < x2 else -1
-    sy = 1 if y1 < y2 else -1
-    err = dx - dy
-
-    while True:
-        points.append((x1, y1))
-
-        if x1 == x2 and y1 == y2:
-            break
-
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x1 += sx
-        if e2 < dx:
-            err += dx
-            y1 += sy
-
-    return points
+    filtered_ranges = filter(is_horizontal_or_vertical, ranges)
+    return count_overlaps(filtered_ranges)
 
 
 def part2(ranges):
-    return draw_and_count(ranges)
+    return count_overlaps(ranges)
 
 
 if __name__ == "__main__":
