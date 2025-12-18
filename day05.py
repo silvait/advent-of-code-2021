@@ -3,49 +3,55 @@ from collections import defaultdict
 
 from utils import get_input_filename, get_line_points
 
+type Coordinate = tuple[int, int]
+type Segment = tuple[Coordinate, Coordinate]
 
-def parse_input(data):
-    ranges = []
-
-    for line in data.splitlines():
-        p1_str, p2_str = line.split(" -> ")
-        ranges.append([parse_coordinate(p1_str), parse_coordinate(p2_str)])
-
-    return ranges
+COORDINATE_SEPARATOR = ","
+SEGMENT_SEPARATOR = " -> "
 
 
-def is_horizontal_or_vertical(coordinates):
-    p1, p2 = coordinates
-    (x1, y1), (x2, y2) = p1, p2
+def parse_coordinate(text: str) -> Coordinate:
+    x, y = map(int, text.split(COORDINATE_SEPARATOR))
+    return (x, y)
+
+
+def parse_segment(text: str) -> Segment:
+    start, end = text.split(SEGMENT_SEPARATOR)
+    return (parse_coordinate(start), parse_coordinate(end))
+
+
+def parse_input(data: str) -> list[Segment]:
+    return list(map(parse_segment, data.splitlines()))
+
+
+def is_horizontal_or_vertical(segment: Segment) -> bool:
+    start, end = segment
+    (x1, y1), (x2, y2) = start, end
     return x1 == x2 or y1 == y2
 
 
-def parse_coordinate(text: str) -> tuple[int, ...]:
-    return tuple(int(c) for c in text.split(","))
-
-
-def plot_lines(ranges):
+def plot_segments(segments: list[Segment]) -> dict[Coordinate, int]:
     counts = defaultdict(int)
 
-    for p1, p2 in ranges:
+    for p1, p2 in segments:
         for x, y in get_line_points(p1, p2):
             counts[(x, y)] += 1
 
     return counts
 
 
-def count_overlaps(ranges):
-    counts = plot_lines(ranges)
-    return sum(v > 1 for v in counts.values())
+def count_overlapping_points(segments: list[Segment]) -> int:
+    grid = plot_segments(segments)
+    return sum(count > 1 for count in grid.values())
 
 
-def part1(ranges):
-    filtered_ranges = filter(is_horizontal_or_vertical, ranges)
-    return count_overlaps(filtered_ranges)
+def part1(segments: list[Segment]) -> int:
+    filtered_ranges = list(filter(is_horizontal_or_vertical, segments))
+    return count_overlapping_points(filtered_ranges)
 
 
-def part2(ranges):
-    return count_overlaps(ranges)
+def part2(segments: list[Segment]) -> int:
+    return count_overlapping_points(segments)
 
 
 if __name__ == "__main__":
