@@ -1,15 +1,17 @@
 import sys
+from collections.abc import Callable
 
 from utils import get_input_filename
 
-type Report = list[list[bool]]
+type Bits = list[bool]
+type Report = list[Bits]
 
 
 def parse_input(data: str) -> Report:
     return [[c == "1" for c in line] for line in data.splitlines()]
 
 
-def bools_to_int(bools: list[bool]) -> int:
+def bools_to_int(bools: Bits) -> int:
     binary_str = ["1" if b else "0" for b in bools]
     return int("".join(binary_str), 2)
 
@@ -31,7 +33,7 @@ def part1(report: Report) -> int:
     return gamma_rate * epsilon_rate
 
 
-def calculate_rating(report: Report, selector) -> int:
+def calculate_rating(report: Report, selector: Callable[[list, list], int]) -> int:
     current = report[:]
 
     for i in range(len(current[0])):
@@ -41,8 +43,8 @@ def calculate_rating(report: Report, selector) -> int:
             bit = line[i]
             partitions[bit].append(line)
 
-        chosen_bit = selector(partitions[0], partitions[1])
-        current = partitions[chosen_bit]
+        chosen_partition = selector(partitions[0], partitions[1])
+        current = partitions[chosen_partition]
 
         if len(current) == 1:
             break
@@ -51,14 +53,14 @@ def calculate_rating(report: Report, selector) -> int:
 
 
 def calculate_oxygen_rating(report: Report) -> int:
-    def pick_most_common(zeros, ones):
+    def pick_most_common(zeros: list, ones: list) -> int:
         return 1 if len(ones) >= len(zeros) else 0
 
     return calculate_rating(report, pick_most_common)
 
 
 def calculate_co2_rating(report: Report) -> int:
-    def pick_least_common(zeros, ones):
+    def pick_least_common(zeros: list, ones: list) -> int:
         return 0 if len(zeros) <= len(ones) else 1
 
     return calculate_rating(report, pick_least_common)
