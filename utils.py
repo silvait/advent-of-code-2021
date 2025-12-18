@@ -1,3 +1,20 @@
+type Coordinate = tuple[int, int]
+type Segment = tuple[Coordinate, Coordinate]
+
+COORDINATE_SEPARATOR = ","
+SEGMENT_SEPARATOR = " -> "
+
+
+def parse_coordinate(text: str, sep: str = COORDINATE_SEPARATOR) -> Coordinate:
+    x, y = map(int, text.split(sep))
+    return (x, y)
+
+
+def parse_segment(text: str, sep: str = SEGMENT_SEPARATOR) -> Segment:
+    start, end = text.split(sep)
+    return (parse_coordinate(start), parse_coordinate(end))
+
+
 def get_input_filename(argv):
     if len(argv) < 2:
         return argv[0].replace(".py", ".txt")

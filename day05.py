@@ -1,23 +1,14 @@
 import sys
 from collections import defaultdict
+from collections.abc import Iterable
 
-from utils import get_input_filename, get_line_points
-
-type Coordinate = tuple[int, int]
-type Segment = tuple[Coordinate, Coordinate]
-
-COORDINATE_SEPARATOR = ","
-SEGMENT_SEPARATOR = " -> "
-
-
-def parse_coordinate(text: str) -> Coordinate:
-    x, y = map(int, text.split(COORDINATE_SEPARATOR))
-    return (x, y)
-
-
-def parse_segment(text: str) -> Segment:
-    start, end = text.split(SEGMENT_SEPARATOR)
-    return (parse_coordinate(start), parse_coordinate(end))
+from utils import (
+    Coordinate,
+    Segment,
+    get_input_filename,
+    get_line_points,
+    parse_segment,
+)
 
 
 def parse_input(data: str) -> list[Segment]:
@@ -30,7 +21,7 @@ def is_horizontal_or_vertical(segment: Segment) -> bool:
     return x1 == x2 or y1 == y2
 
 
-def plot_segments(segments: list[Segment]) -> dict[Coordinate, int]:
+def plot_segments(segments: Iterable[Segment]) -> dict[Coordinate, int]:
     counts = defaultdict(int)
 
     for p1, p2 in segments:
@@ -40,14 +31,14 @@ def plot_segments(segments: list[Segment]) -> dict[Coordinate, int]:
     return counts
 
 
-def count_overlapping_points(segments: list[Segment]) -> int:
+def count_overlapping_points(segments: Iterable[Segment]) -> int:
     grid = plot_segments(segments)
     return sum(count > 1 for count in grid.values())
 
 
 def part1(segments: list[Segment]) -> int:
-    filtered_ranges = list(filter(is_horizontal_or_vertical, segments))
-    return count_overlapping_points(filtered_ranges)
+    vertical_or_horizontal_segments = filter(is_horizontal_or_vertical, segments)
+    return count_overlapping_points(vertical_or_horizontal_segments)
 
 
 def part2(segments: list[Segment]) -> int:
