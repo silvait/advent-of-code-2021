@@ -3,16 +3,16 @@ import sys
 from utils import get_input_filename
 
 
-def parse_input(data):
+def parse_input(data: str):
     return []
 
 
-def part1(*args):
+def part1(*args) -> int:
     total = 0
     return total
 
 
-def part2(*args):
+def part2(*args) -> int:
     total = 0
     return total
 
