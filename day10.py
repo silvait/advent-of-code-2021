@@ -55,7 +55,7 @@ def part1(lines: list[str]) -> int:
     return total
 
 
-def score_completion(completion: str) -> int:
+def score_completion(completion: list[str]) -> int:
     total = 0
 
     for symbol in completion:
@@ -73,7 +73,7 @@ def complete_line(incomplete_line: str) -> list[str]:
         else:
             queue.append(get_closing_symbol(symbol))
 
-    return reversed(queue)
+    return list(reversed(queue))
 
 
 def part2(lines: list[str]) -> int:
