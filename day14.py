@@ -5,45 +5,40 @@ from utils import get_input_filename
 
 type Rules = dict[str, str]
 
+RULE_SEPARATOR = " -> "
+PART1_STEPS = 10
+PART2_STEPS = 40
 
-def parse_rules(lines: list[str]) -> Rules:
-    rules = {}
 
-    for current in lines:
-        pair, insertion = current.split(" -> ")
-        rules[pair] = insertion
-
-    return rules
+def parse_rules(rule_lines: list[str]) -> Rules:
+    return dict(line.split(RULE_SEPARATOR) for line in rule_lines)
 
 
 def parse_input(data: str) -> tuple[str, Rules]:
-    lines = data.splitlines()
+    template, _, *rule_lines = data.splitlines()
 
-    template = lines[0]
-    rules = parse_rules(lines[2:])
-
-    return template, rules
+    return template, parse_rules(rule_lines)
 
 
 def adjacent_pairs(template: str) -> list[str]:
-    return [template[i : i + 2] for i in range(len(template) - 1)]
+    return [a + b for a, b in zip(template, template[1:])]
 
 
-def apply_rules(template: str, rules: Rules, count: int) -> int:
+def apply_rules(template: str, rules: Rules, steps: int) -> int:
     current_pairs = Counter(adjacent_pairs(template))
     element_totals = Counter(template)
 
-    for i in range(count):
+    for _ in range(steps):
         next_pairs = Counter()
 
-        for pair, count in current_pairs.items():
+        for pair, pair_count in current_pairs.items():
             insertion = rules[pair]
             first, second = pair
 
-            next_pairs[first + insertion] += count
-            next_pairs[insertion + second] += count
+            next_pairs[first + insertion] += pair_count
+            next_pairs[insertion + second] += pair_count
 
-            element_totals[insertion] += count
+            element_totals[insertion] += pair_count
 
         current_pairs = next_pairs
 
@@ -55,11 +50,11 @@ def apply_rules(template: str, rules: Rules, count: int) -> int:
 
 
 def part1(template: str, rules: Rules) -> int:
-    return apply_rules(template, rules, 10)
+    return apply_rules(template, rules, PART1_STEPS)
 
 
 def part2(template: str, rules: Rules) -> int:
-    return apply_rules(template, rules, 40)
+    return apply_rules(template, rules, PART2_STEPS)
 
 
 if __name__ == "__main__":
