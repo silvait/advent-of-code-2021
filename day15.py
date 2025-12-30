@@ -13,27 +13,32 @@ type Coordinate = tuple[int, int]
 
 class Grid:
     def __init__(self, rows: int, cols: int):
-        self._grid = {}
+        self._grid = [[0 for _ in range(cols)] for _ in range(rows)]
         self.rows = rows
         self.cols = cols
 
     def add_value(self, coordinate: Coordinate, value: int):
-        self._grid[coordinate] = value
+        r, c = coordinate
+        self._grid[r][c] = value
 
     def get_value(self, coordinate: Coordinate) -> int:
-        return self._grid[coordinate]
+        r, c = coordinate
+        return self._grid[r][c]
 
     def get_neighbors(self, coordinate: Coordinate) -> list[Coordinate]:
-        row, col = coordinate
+        r, c = coordinate
+        neighbors = []
 
-        neighbors = [
-            (row, col - 1),
-            (row - 1, col),
-            (row, col + 1),
-            (row + 1, col),
-        ]
+        if c > 0:
+            neighbors.append((r, c - 1))
+        if r > 0:
+            neighbors.append((r - 1, c))
+        if c < self.cols - 1:
+            neighbors.append((r, c + 1))
+        if r < self.rows - 1:
+            neighbors.append((r + 1, c))
 
-        return [c for c in neighbors if c in self._grid]
+        return neighbors
 
     def first_coordinate(self) -> Coordinate:
         return FIRST_TILE
@@ -45,13 +50,14 @@ class Grid:
         return self.rows, self.cols
 
     def coordinates(self):
-        return self._grid.keys()
+        for r in range(self.rows):
+            for c in range(self.cols):
+                yield (r, c)
 
     def values(self):
-        return self._grid.items()
-
-    def __contains__(self, key: Coordinate) -> bool:
-        return key in self._grid
+        for r in range(self.rows):
+            for c in range(self.cols):
+                yield (r, c), self._grid[r][c]
 
 
 def parse_input(data: str) -> Grid:
