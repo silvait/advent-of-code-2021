@@ -1,6 +1,7 @@
 import heapq
 import math
 import sys
+from collections import defaultdict
 
 from utils import get_input_filename
 
@@ -90,7 +91,7 @@ def expand_grid(grid: Grid, rows_scale: int, cols_scale: int) -> Grid:
 
 def find_lowest_risk_path(grid: Grid, start: Coordinate, end: Coordinate) -> float:
     heap = []
-    costs = {c: math.inf for c in grid.coordinates()}
+    costs = defaultdict(lambda: math.inf)
 
     heapq.heappush(heap, (0, start))
     costs[start] = 0
